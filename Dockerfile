@@ -7,7 +7,7 @@ WORKDIR /app
 RUN apk add --no-cache git python3 make g++
 
 # Клонируем репозиторий OpenCode
-RUN git clone https://github.com/anomalyco/opencode.git .
+RUN git clone --depth 1 https://github.com/anomalyco/opencode.git /app
 
 # Устанавливаем зависимости и собираем
 RUN npm install
@@ -18,7 +18,7 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Устанавливаем только runtime зависимости
+# Устанавливаем runtime зависимости
 RUN apk add --no-cache ca-certificates
 
 # Копируем собранное приложение
