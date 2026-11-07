@@ -1,0 +1,32 @@
+.env
+
+# Runtime artifacts
+.node_modules/
+node_modules/
+**/node_modules/
+.bun/
+.bun.lock
+bun.lock
+bun.lockb
+
+# OpenCode runtime
+.home/.cache/
+.home/.local/share/opencode/log/
+.home/.local/share/opencode/opencode.db
+.home/.local/share/opencode/opencode.db-shm
+.home/.local/share/opencode/opencode.db-wal
+.home/.local/share/opencode/log/
+.home/.local/share/opencode/shell/
+.home/.local/state/opencode/
+
+# Plugin artifacts
+.home/.config/opencode/node_modules/
+.home/.config/opencode/package-lock.json
+
+# npm cache
+.home/.npm/_cacache/
+
+# Editor
+.DS_Store
+.idea/
+.vscode/

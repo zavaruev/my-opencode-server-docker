@@ -1,0 +1,56 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
+  "agents": {
+    "oracle": {
+      "model": "openai/gpt-4o",
+      "description": "Эксперт по коду, архитектуре и обзору изменений"
+    },
+    "librarian": {
+      "model": "openai/gpt-4o-mini",
+      "description": "Исследование документации и поиск кода"
+    },
+    "explore": {
+      "model": "openai/gpt-4o-mini",
+      "description": "Быстрый обзор репозитория и поиск по файлам"
+    }
+  },
+  "categories": {
+    "quick": {
+      "model": "openai/gpt-4o-mini",
+      "description": "Быстрые/дешевые задачи"
+    },
+    "visual-engineering": {
+      "model": "openai/gpt-4o",
+      "description": "UI/UX и фронтенд-задачи"
+    },
+    "code": {
+      "model": "openai/gpt-4o",
+      "description": "Написание и ревью кода"
+    }
+  },
+  "permissions": {
+    "bash": {
+      "*": "ask",
+      "sudo *": "deny",
+      "rm -rf*": "deny",
+      "git *": "allow",
+      "npx *": "allow",
+      "npm *": "allow",
+      "ls *": "allow",
+      "cat *": "allow",
+      "grep *": "allow",
+      "find *": "allow",
+      "mkdir *": "allow",
+      "echo *": "allow"
+    },
+    "external_directory": "ask",
+    "doom_loop": "ask"
+  },
+  "background_tasks": {
+    "concurrency": 3
+  },
+  "experimental": {
+    "auto_resume": true,
+    "aggressive_truncation": true
+  }
+}

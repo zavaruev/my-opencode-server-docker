@@ -1,0 +1,40 @@
+services:
+  opencode-server:
+    image: ghcr.io/${GITHUB_USERNAME:-zavaruev}/opencode-server:latest
+    container_name: opencode-server
+    restart: unless-stopped
+
+    user: "${UID}:${GID}"
+    group_add:
+      - "${DOCKER_GID}"
+
+    # Рабочая директория перенесена в /workspace во избежание сбоев индексации каталога /home/node
+    working_dir: /workspace
+
+    command: ["serve", "--hostname", "0.0.0.0", "--port", "4096"]
+
+    ports:
+      - "${OPENCODE_SERVER_PORT}:4096"
+
+    environment:
+      - NODE_ENV=production
+      - HOME=/home/node
+      - OPENCODE_SERVER_PORT=${OPENCODE_SERVER_PORT}
+      - OPENCODE_SERVER_HOST=${OPENCODE_SERVER_HOST}
+      - OPENCODE_SERVER_PASSWORD=${OPENCODE_SERVER_PASSWORD}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+    volumes:
+      - ./.home:/home/node
+      - ${WORKSPACE_DIR}:/workspace:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.gitconfig:/home/node/.gitconfig:ro
+      - ~/.ssh:/home/node/.ssh:ro
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    dns:
+      - 192.168.22.1

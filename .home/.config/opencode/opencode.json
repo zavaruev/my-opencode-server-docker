@@ -1,0 +1,59 @@
+{
+  "$schema": "https://opencode.ai/config.schema.json",
+  "plugin": [
+    "oh-my-opencode@latest"
+  ],
+  "lsp": {
+    "typescript": {
+      "command": ["typescript-language-server", "--stdio"],
+      "languages": ["typescript", "javascript", "typescriptreact", "javascriptreact"]
+    },
+    "python": {
+      "command": ["pyright-langserver", "--stdio"],
+      "languages": ["python"]
+    },
+    "bash": {
+      "command": ["bash-language-server", "start"],
+      "languages": ["bash", "sh"]
+    }
+  },
+  "mcp": {
+    "servers": {
+      "context7": {
+        "type": "remote",
+        "url": "https://context7.zavaruev.duckdns.org/mcp",
+        "enabled": true
+      },
+      "search": {
+        "type": "remote",
+        "url": "https://search.zavaruev.duckdns.org/mcp",
+        "enabled": true
+      },
+      "github": {
+        "type": "remote",
+        "url": "https://github.zavaruev.duckdns.org/mcp",
+        "enabled": true
+      },
+      "sentry": {
+        "type": "remote",
+        "url": "https://mcp.sentry.dev/mcp",
+        "enabled": true
+      },
+      "linear": {
+        "type": "remote",
+        "url": "https://mcp.linear.app/mcp",
+        "enabled": true
+      },
+      "hindsight": {
+        "type": "remote",
+        "url": "https://hindsight.zavaruev.duckdns.org/mcp",
+        "enabled": true
+      },
+      "npm-mcp": {
+        "type": "remote",
+        "url": "http://host.docker.internal:8000/mcp",
+        "enabled": true
+      }
+    }
+  }
+}
