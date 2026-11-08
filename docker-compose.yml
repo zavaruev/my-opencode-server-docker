@@ -1,6 +1,6 @@
 services:
   opencode-server:
-    image: ghcr.io/${GITHUB_USERNAME:-zavaruev}/opencode-server:latest
+    image: ghcr.io/${GITHUB_USERNAME:-zavaruev}/my-opencode-server-docker:latest
     container_name: opencode-server
     restart: unless-stopped
 
