@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 RUN git clone --depth 1 https://github.com/anomalyco/opencode.git /app
 
 # Install dependencies (may take a few minutes)
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Build OpenCode
 RUN npm run build
