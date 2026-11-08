@@ -1,15 +1,46 @@
 # Minimal Dockerfile for OpenCode Server
-# Uses the pre-built anomalyco image as base, just sets up the environment
-# Auto-build via GitHub Actions is optional (currently has npm 10 compatibility issues)
+# Builds OpenCode from source with npm v10 compatibility
 
-FROM ghcr.io/anomalyco/opencode:2.2.6 AS builder
+FROM node:20 AS builder
 
-# Just mark as built - the actual image is anomalyco/opencode:2.2.6
-# This Dockerfile is mainly for version tracking
+WORKDIR /app
 
-# Metadata
-LABEL org.open-code.version="2.2.6"
-LABEL org.open-code.maintainer="zavaruev"
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# The image is ready to use - just run it
-# Entrypoint is already set in the base image
+# Clone the OpenCode repository
+RUN git clone --depth 1 https://github.com/anomalyco/opencode.git /app
+
+# Install dependencies (npm v10 compatible)
+RUN npm install
+
+# Build OpenCode
+RUN npm run build
+
+# --- Final stage ---
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apk add --no-cache ca-certificates
+
+# Copy built application from builder stage
+COPY --from=builder /app/dist /app/dist
+
+# Copy package.json and install production deps
+COPY --from=builder /app/package.json /app/package.json
+RUN npm install --omit=dev
+
+# Copy .home directory if needed
+COPY --from=builder /app/.home /app/.home 2>/dev/null || true
+
+EXPOSE 4096
+
+ENTRYPOINT ["node", "dist/index.js"]
