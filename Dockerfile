@@ -1,21 +1,15 @@
 # Minimal Dockerfile for OpenCode Server
 # GitHub Actions builds this on every push to main
-# Keeps compatibility by avoiding npm v10 catalog: protocol issues
+# Uses the official OpenCode binary - no npm install needed
 
-FROM node:18-alpine
+FROM ghcr.io/anomalyco/opencode:2.2.6
 
-WORKDIR /app
-
-# Copy the built OpenCode distribution from the source checkout.
-# GitHub Actions actions/checkout provides the repository source code.
-# The dist/ directory should already exist from a previous build or COPY.
-COPY dist ./dist 2>/dev/null || true
-
-# Copy .home directory configuration
-COPY .home .home 2>/dev/null || true
+# Apply label with build info for tracking
+LABEL org.open-code.maintainer="zavaruev" \
+      org.open-code.version="2.2.6"
 
 # Expose OpenCode port
 EXPOSE 4096
 
-# Start OpenCode server using the distributed entry point
-ENTRYPOINT ["node", "dist/index.js"]
+# Start OpenCode server using the pre-compiled binary
+ENTRYPOINT ["opencode", "serve", "--hostname", "0.0.0.0", "--port", "4096"]
