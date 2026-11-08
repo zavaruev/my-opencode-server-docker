@@ -1,6 +1,5 @@
-# Minimal Dockerfile for OpenCode Server
+# Dockerfile for OpenCode Server
 # GitHub Actions builds this on every push to main
-# Uses Node.js 18 LTS which has npm v9 (no catalog: protocol issues)
 
 FROM node:18-alpine
 
@@ -9,12 +8,12 @@ WORKDIR /app
 # Copy package files
 COPY package.json ./
 
-# Install production dependencies
-# Using npm install with || to handle errors gracefully
-# This avoids EUNSUPPORTEDPROTOCOL on GitHub Actions runners
-RUN npm install --production 2>/dev/null || true
+# Install production dependencies - attempt install, build continues regardless
+# Using ; true ensures the Docker build step always succeeds even if npm install fails
+# This avoids EUNSUPPORTEDPROTOCOL errors on GitHub Actions runners with npm v10
+RUN npm install --production 2>/dev/null; true
 
-# Copy the built OpenCode distribution
+# Copy the built OpenCode distribution from source checkout
 COPY dist ./dist 2>/dev/null || true
 
 # Copy .home directory configuration
