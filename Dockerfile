@@ -1,5 +1,5 @@
 # Minimal Dockerfile for OpenCode Server
-# Builds OpenCode from source with npm v10 compatibility
+# Builds OpenCode from source
 
 FROM node:20 AS builder
 
@@ -16,7 +16,10 @@ RUN apt-get update && apt-get install -y \
 # Clone the OpenCode repository
 RUN git clone --depth 1 https://github.com/anomalyco/opencode.git /app
 
-# Install dependencies (npm v10 compatible)
+# Set npm config for compatibility with GitHub Actions runners (npm v10)
+RUN npm config set legacy-peer-deps true 2>/dev/null
+
+# Install dependencies
 RUN npm install
 
 # Build OpenCode
