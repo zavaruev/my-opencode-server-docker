@@ -17,10 +17,6 @@ RUN apt-get update && apt-get install -y \
 # Clone the OpenCode repository
 RUN git clone --depth 1 https://github.com/anomalyco/opencode.git /app
 
-# Set npm registry and install dependencies
-RUN npm config set fetch-retries 5 && \
-    npm config set network-timeout 120000
-
 # Install dependencies (may take a few minutes)
 RUN npm install
 
