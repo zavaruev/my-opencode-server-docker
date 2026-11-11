@@ -26,6 +26,7 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PAT}
 
     volumes:
       - ./.home:/home/node

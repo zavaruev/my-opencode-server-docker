@@ -26,8 +26,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels)
         id: meta
@@ -38,6 +38,37 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
             type=sha,prefix=
 
+      - name: Resolve newest upstream version
+        id: resolve
+        run: |
+          set -euo pipefail
+          token=$(curl -sf "https://ghcr.io/token?scope=repository:anomalyco/opencode:pull&service=ghcr.io" \
+            | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
+          test -n "$token"
+          url="https://ghcr.io/v2/anomalyco/opencode/tags/list?n=1000"
+          : > tags_raw.txt
+          # GHCR caps pages at 1000 tags; the Link header (on GET responses
+          # only) carries a RELATIVE continuation URL, so it must be prefixed.
+          for _ in 1 2 3 4 5 6 7 8 9 10 11 12; do
+            curl -sf -D headers.txt -H "Authorization: Bearer $token" "$url" \
+              > page.json || { echo "Failed to fetch tags page" >&2; exit 1; }
+            grep -oE '"[0-9]+\.[0-9]+\.[0-9]+"' page.json \
+              | tr -d '"' >> tags_raw.txt || true
+            link=$(tr -d '\r' < headers.txt \
+              | sed -n 's/^[Ll]ink:.*<\([^>]*\)>;\s*rel="next".*/\1/p')
+            [ -n "$link" ] || break
+            case "$link" in
+              http*) : ;;
+              /*) link="https://ghcr.io$link" ;;
+            esac
+            url="$link"
+          done
+          latest_tag=$(sort -u tags_raw.txt \
+            | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)
+          test -n "$latest_tag" || { echo "No version tag resolved" >&2; exit 1; }
+          echo "Resolved upstream version: $latest_tag"
+          echo "tag=$latest_tag" >> "$GITHUB_OUTPUT"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -45,5 +76,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:latest,mode=max
+          build-args:
+            OPENCORE_VERSION=${{ steps.resolve.outputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
