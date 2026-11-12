@@ -19,14 +19,20 @@ services:
     environment:
       - NODE_ENV=production
       - HOME=/home/node
-      - OPENCODE_SERVER_PORT=${OPENCODE_SERVER_PORT}
-      - OPENCODE_SERVER_HOST=${OPENCODE_SERVER_HOST}
-      - OPENCODE_SERVER_PASSWORD=${OPENCODE_SERVER_PASSWORD}
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # GITHUB_PAT из .env маппится под имя, которое ожидает OpenCode.
+      # (если переименуете в .env GITHUB_PAT -> GITHUB_PERSONAL_ACCESS_TOKEN,
+      # эту строку можно удалить)
       - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PAT}
+
+    # Пароль и ключи берутся напрямую из .env. ВАЖНО: значения env_file не
+    # перекрываются переменными shell-окружения, в отличие от ${}-подстановок
+    # выше: compose при разрешении ${VAR} сначала смотрит в окружение процесса
+    # и только потом в .env. Сессии агентов наследуют OPENCODE_SERVER_PASSWORD
+    # из host-процесса opencode, из-за чего пароль из .env подменялся старым
+    # значением из окружения ("херня с паролями"). Поэтому секреты — только
+    # через env_file.
+    env_file:
+      - .env
 
     volumes:
       - ./.home:/home/node
