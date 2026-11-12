@@ -37,6 +37,9 @@ services:
     volumes:
       - ./.home:/home/node
       - ${WORKSPACE_DIR}:/workspace:rw
+      # Старые compose-проекты: миграция по частям в /workspace
+      # (смонтирован под тем же путём, вне /workspace, чтобы не попадал в индексацию)
+      - /mnt/media/docker-compose:/mnt/media/docker-compose:rw
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/.gitconfig:/home/node/.gitconfig:ro
       - ~/.ssh:/home/node/.ssh:ro
