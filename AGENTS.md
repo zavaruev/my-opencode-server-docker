@@ -125,10 +125,18 @@
 
 ## Oh My OpenCode
 
-Установлен и настроен в `.home/.config/opencode/opencode.json` (секция `"plugin": ["oh-my-opencode@latest"]`) и `.home/.config/opencode/oh-my-opencode.json` (ростер агентов, категории задач, права доступа).
+Установлен и настроен в `.home/.config/opencode/opencode.json` (секция `"plugins": ["oh-my-opencode@latest", "plugin-rtk_opencode-v2"]`) и `.home/.config/opencode/oh-my-opencode.json` (ростер агентов, категории задач, права доступа).
 
 **Агенты:** oracle, librarian, explore
 **Категории:** quick, visual-engineering, code
+
+## RTK-плагин (экономия токенов)
+
+В конфиге подключён плагин `plugin-rtk_opencode-v2` — перед выполнением shell-команд переписывает их в `rtk ...` (например, `git status` → `rtk git status`), и RTK сжимает вывод до того, как его прочитает модель. Требует бинарник `rtk` внутри контейнера — ставится в Dockerfile из релиза [rtk-ai/rtk](https://github.com/rtk-ai/rtk) (переменная `RTK_VERSION`).
+
+**Важно:** держать `RTK_VERSION=1.1.0`. Сборки v1.2.0+ собраны под x86-64-v3 (AVX2) и падают SIGILL на этом хосте (Xeon X5670 — Westmere, без AVX). Перед обновлением проверять бинарь на хосте: `./rtk --version && ./rtk rewrite "git status"`.
+
+Проверка в контейнере: `docker exec opencode-server rtk --version` и `docker exec opencode-server rtk rewrite "git status"`. Статистика экономии: `docker exec opencode-server rtk gain`.
 
 ## Автосборка образа
 
