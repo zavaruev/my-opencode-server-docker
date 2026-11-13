@@ -156,7 +156,7 @@ curl -u "opencode:<пароль из .env>" http://localhost:4097/api/info   # �
 
 Настроен GitHub Actions (`.github/workflows/docker-build.yml`):
 - Собирает образ каждый день в 3:00 по UTC
-- При пуше в ветку `main`
+- При пуше в ветку `main` — **только если изменены `Dockerfile` или сам workflow** (фильтр `paths`): правки `docker-compose.yml`/доков не создают новый дайджест образа, чтобы watchtower не пересоздавал контейнер впустую
 - При ручном запуске (`workflow_dispatch`)
 - Образ пушится в `ghcr.io/<ваш-логин>/opencode-server:latest`
 

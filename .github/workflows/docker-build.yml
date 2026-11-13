@@ -2,11 +2,17 @@ name: Build and Push OpenCode Server Image
 
 on:
   schedule:
-    - cron: '0 3 * * *'  # Ежедневно в 3:00 по UTC
+    - cron: '0 3 * * *'  # Ежедневно в 3:00 по UTC (подхватывает новые версии upstream)
   workflow_dispatch:  # Ручной запуск из интерфейса GitHub
   push:
     branches:
       - main
+    # Собирать только при изменениях, влияющих на образ. Правки compose/доков
+    # не должны создавать новый дайджест образа (иначе watchtower каждую ночь
+    # пересоздаёт контейнер без реальных изменений).
+    paths:
+      - 'Dockerfile'
+      - '.github/workflows/docker-build.yml'
 
 jobs:
   build:
