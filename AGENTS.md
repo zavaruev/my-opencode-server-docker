@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Репозиторий содержит только Docker Compose-сборку OpenCode Server. Исходного кода, сборки, тестов и git-истории здесь нет. В корне должен оставаться только `docker-compose.yml` — всё остательное (`.env`, конфиг, кэш) выносится за пределы репозитория или игнорируется.
+Репозиторий содержит Docker Compose-сборку OpenCode Server: `docker-compose.yml`, `Dockerfile` и workflow автосборки образа (`.github/workflows/docker-build.yml`). `.env`, конфиги и кэш держатся за пределами репозитория или игнорируются.
 
 ## Запуск сервера
 
